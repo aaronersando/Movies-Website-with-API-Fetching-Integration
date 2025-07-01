@@ -51,20 +51,28 @@ const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
 export default function App() {
+  const [movies, setMovies] = useState(tempMovieData);
   return (
     <>
-      <NavBar />
-      <Main />
+      <NavBar>
+        <Search />
+        <Results movies={movies} />
+      </NavBar>
+      <Main>
+        <ListBox>
+          <MovieList movies={movies} />
+        </ListBox>
+        <MovieBox />
+      </Main>
     </>
   );
 }
 
-function NavBar() {
+function NavBar({ children }) {
   return (
     <nav className="nav-bar">
       <Logo />
-      <Search />
-      <Results />
+      {children}
     </nav>
   );
 }
@@ -73,7 +81,7 @@ function Logo() {
   return (
     <div className="logo">
       <span role="img">🍿</span>
-      <h1>usePopcorn</h1>
+      <h1>Movies</h1>
     </div>
   );
 }
@@ -91,24 +99,19 @@ function Search() {
   );
 }
 
-function Results() {
+function Results({ movies }) {
   return (
     <p className="num-results">
-      Found <strong>XS</strong> results
+      Found <strong>{movies.length}</strong> results
     </p>
   );
 }
 
-function Main() {
-  return (
-    <main className="main">
-      <ListBox />
-      <MovieBox />
-    </main>
-  );
+function Main({ children }) {
+  return <main className="main">{children}</main>;
 }
 
-function ListBox() {
+function ListBox({ children }) {
   const [isOpen1, setIsOpen1] = useState(true);
 
   return (
@@ -119,13 +122,12 @@ function ListBox() {
       >
         {isOpen1 ? "–" : "+"}
       </button>
-      {isOpen1 && <MovieList />}
+      {isOpen1 && children}
     </div>
   );
 }
 
-function MovieList() {
-  const [movies, setMovies] = useState(tempMovieData);
+function MovieList({ movies }) {
   return (
     <ul className="list">
       {movies?.map((movie) => (
@@ -202,7 +204,7 @@ function WatchedList({ watched }) {
     <>
       <ul className="list">
         {watched.map((movie) => (
-          <Watched movie={movie} />
+          <Watched movie={movie} key={movie.imdbID} />
         ))}
       </ul>
     </>
